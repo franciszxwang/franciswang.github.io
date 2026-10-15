@@ -213,12 +213,19 @@
   .skill .items span { background: var(--bg-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 14.5px; }
 
   /* pursuits */
-  .pursuits { display: grid; grid-template-columns: 1fr; gap: 36px 40px; }
-  @media (min-width: 700px) { .pursuits { grid-template-columns: 1fr 1fr; } }
+  /* groups: each group = one photo + 1–2 pursuits beneath it; a group spans as many columns as it has pursuits */
+  .pursuits { display: grid; grid-template-columns: 1fr; gap: 40px 36px; }
+  @media (min-width: 820px) { .pursuits { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .pgroup { min-width: 0; display: grid; gap: 18px; align-content: start; }
+  @media (min-width: 820px) { .pgroup { grid-column: span var(--n, 1); } }
+  .pfig { margin: 0; display: grid; gap: 8px; }
+  .pfig .pic { width: 100%; max-width: 100%; height: auto; display: block; border-radius: 12px; border: 1px solid var(--line); background: var(--bg-2); }
+  .pfig figcaption { font-family: var(--font-mono); font-size: 12px; color: var(--muted); letter-spacing: 0.03em; }
+  .pitems { display: grid; grid-template-columns: 1fr; gap: 32px 36px; }
+  @media (min-width: 600px) { .pitems { grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); } }
   .pursuit { min-width: 0; display: grid; gap: 8px; align-content: start; }
   .pursuit .eyebrow { display: flex; gap: 12px; align-items: baseline; }
   .pursuit .eyebrow .zh { color: var(--accent-ink); font-size: 15px; }
-  .pursuit .pic { width: 100%; max-width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; border-radius: 12px; border: 1px solid var(--line); background: var(--bg-2); margin-bottom: 4px; }
   .pursuit h3 { font-size: 21px; font-weight: 900; }
   .pursuit .ptag { font-style: italic; color: var(--ink-2); margin: 0; }
   .pursuit ul { margin: 2px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
@@ -261,13 +268,13 @@ const DATA = {
     "I grew up in Kunming, Yunnan, studied finance in Boston and Durham, and spend the rest of my time fencing, playing violin, and on the golf course.",
   ],
   photo: "img/grad.jpg",                                 // 右侧大照片
-  tags: ["Credit & Market Risk", "Fixed Income", "Financial Modeling", "Python · SQL · Excel"],
+  tags: ["Credit & Market Risk", "Fixed Income & MBS", "Equity Research", "Private Credit & Real Estate", "Internal Audit & Controls", "Financial Modeling", "Python · R · SQL", "Excel · VBA · Tableau"],
 
   // ---------- Bio ----------
   bio: [
     "I'm a recent graduate of [Duke University's Fuqua School of Business](https://www.fuqua.duke.edu/), where I earned my MS in Quantitative Management (Business Analytics & Finance) in May 2026. My capstone, sponsored by the **Peter G. Peterson Foundation**, analyzed central-bank reserve allocation and the U.S. Treasury term premium and was graded Superior by both faculty and the client sponsor.",
     "Before Duke, I earned a BA in Finance, magna cum laude, from [Northeastern University](https://www.northeastern.edu/), after starting my undergraduate studies at Bentley University. My work has run through **GF Securities** and its Smart Lion Hedge Fund (fixed income, credit and margin risk, client advisory), **Lantheus Holdings** (finance and investor relations), **Junfa Real Estate** (underwriting and valuation), and **Dentons** (paralegal and client liaison). I have passed CFA Level I, FRM Part I, the CISA exam, and the SIE.",
-    "Outside work I'm a national-level fencer and former captain of the Kunming City team, and I spent two years as a referee and club coach for the Yunnan and Kunming sports administrations. I also play violin and golf, and founded the Fuqua 19-Hole Golf Club at Duke.",
+    "Outside work I'm a national-level fencer and former captain of the Kunming City team, and I spent two years as a referee and club coach for the Yunnan and Kunming sports administrations. I have played violin since I was seven, founded the Fuqua 19-Hole Golf Club at Duke, and spend the rest of my free time on classic film scores, history, and museums.",
   ],
 
   // ---------- News（按时间倒序） ----------
@@ -293,10 +300,10 @@ const DATA = {
   // ---------- 创办（images 可放 1–2 张，留 [] 则只显示文字） ----------
   founded: [
     { what: "Fuqua 19-Hole Golf Club", how: "Founder · Duke University", when: "2025 – 2026",
-      desc: "[一两句：俱乐部做什么、多少成员、办过什么活动]",
+      desc: "A 16-member club at Fuqua that runs regular practice sessions and organizes tournaments for members.",
       images: ["img/golf-1.jpg", "img/golf-2.jpg"] },
     { what: "Silver Café · 银环", how: "Founder · event start-up", when: "[年份]",
-      desc: "[一两句：Silver Café 是什么、在哪里、做了什么]",
+      desc: "Specialty pour-over coffee and seasonal cakes. Hosted a community coffee festival, a pet meetup, and the “Meet Guatemala” and “Meet Ethiopia” single-origin events.",
       images: ["img/silver-coffee.jpg", "img/silver-cat.jpg"] },
   ],
 
@@ -420,6 +427,7 @@ const DATA = {
     { name: "SIE",                                       issuer: "FINRA — Securities Industry Essentials",                status: "Passed" },
     { name: "Sustainable Investing Certificate",         issuer: "CFA Institute",                                         status: "Completed" },
     { name: "China First-Class Athlete · 国家一级运动员", issuer: "Fencing",                                               status: "Certified" },
+    { name: "Violin Performance — Highest Amateur Grade",   issuer: "Yunnan Conservatory of Music · 云南音乐学院",                 status: "Certified" },
   ],
 
   // ---------- Skills ----------
@@ -431,31 +439,50 @@ const DATA = {
     { label: "Languages",          items: ["Mandarin (native)", "English (fluent)"] },
   ],
 
-  // ---------- 工作之外 ----------
-  pursuits: [
+  // ---------- 工作之外（每个 group 一张图，图下面可以放 1–2 个板块；caption 可留空） ----------
+  pursuitGroups: [
     {
-      zh: "击剑", title: "Fencing",
-      tagline: "National-level competitor; a counterattack fencer by temperament.",
-      highlights: ["Foil (花剑)", "China First-Class Athlete (国家一级运动员)", "Captain, Kunming City Fencing Team (2015–2020)", "Northeastern Fencing Team", "Referee & club coach, Yunnan and Kunming sports administrations (2018–2020)", "[主要赛事与成绩]"],
-      image: "",
+      image: "img/fencing-violin.jpg",
+      caption: "Medals, mask and violin at home in Kunming.",
+      items: [
+        {
+          zh: "击剑", title: "Fencing",
+          tagline: "National-level competitor; a counterattack fencer by temperament.",
+          highlights: [
+            "Foil (花剑)",
+            "Yunnan Provincial Championships — individual and team champion, 2015, 2016 and 2018",
+            "China First-Class Athlete (国家一级运动员) — the youngest in Yunnan's youth ranks when certified",
+            "Captain, Kunming City Fencing Team (2015–2020)",
+            "Northeastern Fencing Team",
+            "Referee & club coach, Yunnan and Kunming sports administrations (2018–2020)",
+          ],
+        },
+        {
+          zh: "艺术", title: "Arts & Culture",
+          tagline: "Violinist since age seven; film, history and museums the rest of the time.",
+          highlights: [
+            "Violin — highest amateur performance grade, Yunnan Conservatory of Music",
+            "Favorite piece: Massenet, Méditation from Thaïs",
+            "Classic film scores and soundtracks; a devoted film-goer",
+            "History and museums wherever I travel",
+          ],
+        },
+      ],
     },
     {
-      zh: "小提琴", title: "Violin",
-      tagline: "[一句话：和小提琴的关系]",
-      highlights: ["[何时开始学琴]", "[乐团 / 演出经历]", "[最喜欢的曲目]"],
-      image: "",
-    },
-    {
-      zh: "高尔夫", title: "Golf",
-      tagline: "Founded the Fuqua 19-Hole Golf Club at Duke.",
-      highlights: ["Founder, Fuqua 19-Hole Golf Club", "Northeastern Golf Club", "[差点 / 常去的球场]", "[难忘的一轮]"],
-      image: "img/golf-2.jpg",
-    },
-    {
-      zh: "旅行", title: "Travel",
-      tagline: "From the mountains of Yunnan outward.",
-      highlights: ["Home: Kunming, Yunnan, China", "[去过的地方 / 最喜欢的目的地]", "[下一站]"],
-      image: "",
+      image: "img/golf-sq.jpg",
+      caption: "",
+      items: [
+        {
+          zh: "高尔夫", title: "Golf",
+          tagline: "Founded the Fuqua 19-Hole Golf Club at Duke.",
+          highlights: [
+            "Founder, Fuqua 19-Hole Golf Club — 16 members, regular practice and member tournaments",
+            "Northeastern Golf Club",
+            "[差点 / 常去的球场]",
+          ],
+        },
+      ],
     },
   ],
 
@@ -692,14 +719,22 @@ const DATA = {
     <div class="skill"><div class="label">${txt(s.label)}</div><div class="items">${(s.items || []).map((i) => `<span>${txt(i)}</span>`).join("")}</div></div>`).join("");
 
   // ---- pursuits ----
-  $("pursuits").innerHTML = (DATA.pursuits || []).map((p) => `
-    <article class="pursuit">
-      <div class="eyebrow"><span class="zh">${txt(p.zh)}</span><span>${esc(p.title)}</span></div>
-      ${img(p.image, p.title, "pic")}
-      <h3>${txt(p.title)}</h3>
-      ${p.tagline ? `<p class="ptag">${md(p.tagline)}</p>` : ""}
-      <ul>${(p.highlights || []).filter(Boolean).map((h) => `<li>${md(h)}</li>`).join("")}</ul>
-    </article>`).join("");
+  $("pursuits").innerHTML = (DATA.pursuitGroups || []).map((g) => {
+    const items = (g.items || []).filter((p) => p && p.title);
+    const n = Math.max(1, items.length);
+    return `
+    <div class="pgroup" style="--n:${n}">
+      ${g.image ? `<figure class="pfig">${img(g.image, items.map((p) => p.title).join(" & "), "pic")}${g.caption ? `<figcaption>${md(g.caption)}</figcaption>` : ""}</figure>` : ""}
+      <div class="pitems">${items.map((p) => `
+        <article class="pursuit">
+          <div class="eyebrow"><span class="zh">${txt(p.zh)}</span><span>${esc(p.title)}</span></div>
+          <h3>${txt(p.title)}</h3>
+          ${p.tagline ? `<p class="ptag">${md(p.tagline)}</p>` : ""}
+          <ul>${(p.highlights || []).filter(Boolean).map((h) => `<li>${md(h)}</li>`).join("")}</ul>
+        </article>`).join("")}
+      </div>
+    </div>`;
+  }).join("");
 
   // ---- footer ----
   $("foot-name").textContent = DATA.name;
